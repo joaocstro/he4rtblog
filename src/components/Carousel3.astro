@@ -1,0 +1,86 @@
+---
+import { getCollection } from "astro:content";
+import Card from "./Card3.astro";
+
+export interface Props {
+    title: string;
+    category: string;
+    amount: number;
+    featured?: boolean;
+}
+
+const { title, category, amount, featured = false } = Astro.props;
+
+const posts = (await getCollection("article"))
+    .filter((post) => post.data.tags.includes(category) && post.slug)
+    .sort((a, b) => {
+        return a.data.publishedAt.getTime() - b.data.publishedAt.getTime();
+    })
+    .reverse()
+    .slice(0, amount);
+
+const cards = posts.map((post) => {
+    return {
+        href: `/article/${post.slug}`,
+        image: post.data.image?.filePath,
+        imageAlt: post.data.image?.alt,
+        title: post.data.title,
+        author: post.data.author,
+        tags: post.data.tags,
+        date: post.data.publishedAt,
+    };
+});
+---
+
+<div class:list={["carousel", { featured: featured }]}>
+    <h1 class="title">{title}</h1>
+
+    <div class="cards-wrapper">
+        {
+            cards.map((card, index) => {
+                return (
+                    <div class="card-wrapper">
+                        <Card
+                            title={card.title}
+                            author={card.author}
+                            href={card.href}
+                            image={card.image}
+                            imageAlt={card.imageAlt}
+                            imageLazy={!featured}
+                            date={card.date}
+                            tags={card.tags}
+                        />
+                    </div>
+                );
+            })
+        }
+    </div>
+</div>
+
+<style>
+    .title {
+        font-weight: 700;
+        font-size: clamp(1.5rem, 4vw, 2rem);
+
+        margin-bottom: 14px;
+    }
+
+    .cards-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        
+        width: 100%;
+        
+        gap: 30px;
+        row-gap: 60px;
+    }
+    
+    .card-wrapper {
+        flex: 1 1 200px;
+    }
+
+    .featured .card-wrapper:nth-child(1) {
+        flex: 1 0 100%;
+        height: min-content;
+    }
+</style>

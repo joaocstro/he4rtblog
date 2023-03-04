@@ -1,0 +1,163 @@
+---
+import Author from "./Author.astro";
+import type { Author as AuthorType } from "../content/_authors";
+
+export interface Props {
+	title: string;
+	href: string;
+	author: AuthorType;
+	image?: string;
+	imageAlt?: string;
+    imageLazy?: boolean;
+	date: Date;
+	tags: string[];
+}
+
+const {
+	image = "/card-placeholder2.png",
+	imageAlt = "Imagem do artigo",
+    imageLazy = true,
+	author,
+	href,
+	title,
+	date,
+	tags,
+} = Astro.props;
+---
+
+<div class="container">
+    <a class="card-wrapper" href={href}>
+        <div class="image-wrapper">
+            <img src={image} alt={imageAlt} loading={imageLazy ? "lazy" : "eager"}/>
+        </div>
+    
+        <div class="card-info">
+            <Author author={author} date={date} />
+            <h1>{title}</h1>
+    
+            <div class="tags-wrapper">
+                {
+                    tags.map((tag) => {
+                        return <span class="tag">{tag} </span>;
+                    })
+                }
+            </div>
+        </div>
+    </a>
+</div>
+
+<style>
+    .container {
+        container-type: inline-size;
+        height: 100%;
+        width: 100%;
+    }
+
+	.card-wrapper {
+		display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, max-content));
+        grid-template-rows: minmax(185px, max-content);
+
+		text-decoration: none;
+		color: unset;
+
+        height: 100%;
+        width: 100%;
+
+		column-gap: clamp(10px, 2.6cqw, 40px);
+        row-gap: 10px;
+	}
+
+	img {
+        all: unset;
+		object-fit: cover;
+
+        -webkit-user-drag: none;
+        user-drag: none;
+        
+        aspect-ratio: 2.1/1;
+        height: 100%;
+        width: 500px;
+        max-width: 100%;
+
+        overflow: hidden;
+        
+        border-radius: 5px;
+
+        background-color: var(--c-elevation-2);
+
+		transition: scale 0.2s;
+	}
+
+    .image-wrapper {
+        position: relative;
+    }
+
+    .image-wrapper:after {
+        content: '';
+        position: absolute;
+
+        width: 100%;
+        height: 100%;
+
+        inset: 0;
+
+        opacity: 1;
+        transition: opacity ease-out 0.4s;
+        background: linear-gradient(180deg, rgba(13, 13, 13, 0) 0%, var(--c-background) 100%);
+    }
+
+    .card-wrapper:is(:hover, :focus) .image-wrapper:after {
+        opacity: 0;
+    }
+
+	.card-info {
+		display: flex;
+		flex-direction: column;
+
+		justify-content: space-between;
+
+		gap: 10px;
+	}
+
+	h1 {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        overflow-wrap: anywhere;
+        text-overflow: ellipsis;
+
+		font-style: normal;
+		font-weight: 700;
+		font-size: clamp(1.1rem, 3.5cqw, 2rem);
+		color: var(--c-text);
+	}
+
+    .tags-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+
+        gap: 7px;
+
+        font-size: 0.8rem;
+
+        height: 1.7em;
+        width: 100%;
+
+        overflow: hidden;
+    }
+
+	.tag {
+        box-sizing: border-box;
+        height: 1.7em;
+        padding: 0.15em 0.75em;
+        
+        border-radius: 5px;
+        
+		color: var(--c-primary);
+		font-weight: 700;
+
+        background-color: rgba(var(--c-primary-rgb), 0.1);
+	}
+</style>

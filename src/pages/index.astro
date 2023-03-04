@@ -1,19 +1,24 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Carousel from "../components/Carousel.astro";
+import Carousel2 from "../components/Carousel2.astro";
+import Carousel3 from "../components/Carousel3.astro";
+import CardStyleToggle from "../components/CardStyleToggle.svelte";
+
+
+function toggleCardStyle() {
+
+}
 ---
 
 <Layout title="Welcome to Astro.">
 	<main>
-		<div class="carousel-wrapper">
-			<Carousel featured={true} title={"Publicações recentes"} amount={3} category="Frontend" />
-		</div>
-		<div class="carousel-wrapper">
-			<Carousel title={"Frontend"} amount={3} category="Frontend" />
-		</div>
-		<div class="carousel-wrapper">
-			<Carousel title={"Backend"} amount={3} category="Frontend" />
-		</div>
+
+    <CardStyleToggle client:load>
+      <Carousel slot="cards" featured={true} title={"Cards com sombra"} amount={3} category="Frontend" />
+      <Carousel2 slot="cards2" featured={true} title={"Cards sem sombra"} amount={3} category="Frontend" />
+      <Carousel3 slot="cards3" featured={true} title={"Cards sombra + hover"} amount={3} category="Frontend" />
+    </CardStyleToggle>
 	</main>
 </Layout>
 
